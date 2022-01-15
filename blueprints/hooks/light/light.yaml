@@ -412,7 +412,7 @@ action:
               - service: light.turn_on
                 data:
                   brightness: '{{ [ [state_attr(light,"brightness")+step_short, min_brightness] | max, max_brightness] | min }}'
-                  transition: 0.25
+                  transition: '{{ light_transition / 1000 }}'
                   entity_id: !input light
       - conditions: '{{ action == brightness_down and states(light) == "on" }}'
         sequence:
@@ -427,7 +427,7 @@ action:
               - service: light.turn_on
                 data:
                   brightness: '{{ [ [state_attr(light,"brightness")-step_short, min_brightness] | max, max_brightness] | min }}'
-                  transition: 0.25
+                  transition: '{{ light_transition / 1000 }}'
                   entity_id: !input light
       - conditions: '{{ action == brightness_up_repeat }}'
         sequence:
@@ -459,10 +459,10 @@ action:
                 - service: light.turn_on
                   data:
                     brightness: '{{ [ [state_attr(light,"brightness")+step_long, min_brightness] | max, max_brightness] | min }}'
-                    transition: 0.25
+                    transition: '{{ light_transition / 1000 }}'
                     entity_id: !input light
                 - delay:
-                    milliseconds: 250
+                    milliseconds: '{{ light_transition }}'
       - conditions: '{{ action == brightness_down_repeat and states(light) == "on"  }}'
         sequence:
           - choose:
@@ -488,10 +488,10 @@ action:
                             - service: light.turn_on
                               data:
                                 brightness: '{{ [ [state_attr(light,"brightness")-step_long, min_brightness] | max, max_brightness] | min }}'
-                                transition: 0.25
+                                transition: '{{ light_transition / 1000 }}'
                                 entity_id: !input light
                             - delay:
-                                milliseconds: 250
+                                milliseconds:  '{{ light_transition }}'
             default:
               - repeat:
                   # continue lowering brightness until the light turns off
@@ -501,10 +501,10 @@ action:
                     - service: light.turn_on
                       data:
                         brightness: '{{ [ [state_attr(light,"brightness")-step_long, min_brightness] | max, max_brightness] | min }}'
-                        transition: 0.25
+                        transition: '{{ light_transition / 1000 }}'
                         entity_id: !input light
                     - delay:
-                        milliseconds: 250
+                        milliseconds:  '{{ light_transition }}'
       - conditions: '{{ action == color_up and light_color_mode_id != "none" }}'
         sequence:
           choose:
@@ -513,14 +513,14 @@ action:
                 - service: light.turn_on
                   data:
                     color_temp: '{{ state_attr(light,"color_temp")|int + 50 }}'
-                    transition: 0.25
+                    transition: '{{ light_transition / 1000 }}'
                   entity_id: !input light
             - conditions: '{{ light_color_mode_id == "hs_color" }}'
               sequence:
                 - service: light.turn_on
                   data:
                     hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) + 15) % 360, 100] }}'
-                    transition: 0.25
+                    transition: '{{ light_transition / 1000 }}'
                   entity_id: !input light
       - conditions: '{{ action == color_down and light_color_mode_id != "none" }}'
         sequence:
@@ -530,14 +530,14 @@ action:
                 - service: light.turn_on
                   data:
                     color_temp: '{{ [state_attr(light,"color_temp")|int - 50, 1]|max }}'
-                    transition: 0.25
+                    transition: '{{ light_transition / 1000 }}'
                   entity_id: !input light
             - conditions: '{{ light_color_mode_id == "hs_color" }}'
               sequence:
                 - service: light.turn_on
                   data:
                     hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) - 15) % 360, 100] }}'
-                    transition: 0.25
+                    transition: '{{ light_transition / 1000 }}'
                   entity_id: !input light
       - conditions: '{{ action == color_up_repeat and light_color_mode_id != "none" }}'
         sequence:
@@ -550,10 +550,10 @@ action:
                       - service: light.turn_on
                         data:
                           color_temp: '{{ state_attr(light,"color_temp")|int + 50 }}'
-                          transition: 0.25
+                          transition: '{{ light_transition / 1000 }}'
                         entity_id: !input light
                       - delay:
-                          milliseconds: 250
+                          milliseconds: '{{ light_transition }}'
             - conditions: '{{ light_color_mode_id == "hs_color" }}'
               sequence:
                 - repeat:
@@ -562,10 +562,10 @@ action:
                       - service: light.turn_on
                         data:
                           hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) + 15) % 360, 100] }}'
-                          transition: 0.25
+                          transition: '{{ light_transition / 1000 }}'
                         entity_id: !input light
                       - delay:
-                          milliseconds: 250
+                          milliseconds: '{{ light_transition }}'
       - conditions: '{{ action == color_down_repeat and light_color_mode_id != "none" }}'
         sequence:
           choose:
@@ -577,10 +577,10 @@ action:
                       - service: light.turn_on
                         data:
                           color_temp: '{{ [state_attr(light,"color_temp")|int - 50, 1]|max }}'
-                          transition: 0.25
+                          transition: '{{ light_transition / 1000 }}'
                         entity_id: !input light
                       - delay:
-                          milliseconds: 250
+                          milliseconds: '{{ light_transition }}'
             - conditions: '{{ light_color_mode_id == "hs_color" }}'
               sequence:
                 - repeat:
@@ -589,7 +589,7 @@ action:
                       - service: light.turn_on
                         data:
                           hs_color: '{{ [((state_attr(light,"hs_color")[0] or 0) - 15) % 360, 100] }}'
-                          transition: 0.25
+                          transition: '{{ light_transition / 1000 }}'
                         entity_id: !input light
                       - delay:
-                          milliseconds: 250
+                          milliseconds: '{{ light_transition }}'
